@@ -1,44 +1,38 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+const routerService = require ('./routes/services')
+const routerContact = require ('./routes/contact') 
 
-//the sherlude setting:
-const config = require('./config')
-const scheduler = require('./scheduler')
-
-const PORT = 8000
-
-//middlewares
-app.use(express.json())
-scheduler.initCrons(config)
-app.use(express.static(path.join(__dirname, 'public')))
-app.use('/', require ('./routes/services'))
-app.use('/', require ('./routes/contact'))
-
+const PORT = 5000
 //init middleware praser
 app.use(express.json())
-/* 
-//add a middleware of a navbar in every page
- app.use(navbarMid) 
-  function navbarMid (req,res) {
-      res.sendFile(path.join(__dirname, 'public','navbar.html'))     
-    }    
- */
 
-/* 
-//time condition
-//get the actual day:
-function getTheCurrentTimeString(){
-  return new Date().toString();
+
+//Set time condition
+const midelware = (req, res, next) => {
+  let today = new Date()
+  let todayNumber = today.getDay()
+  console.log(todayNumber)
+
+  let nowHour = today.getHours()
+  console.log(nowHour)
+
+  if ( todayNumber >= 1 && todayNumber<= 5 && nowHour >= 9 && nowHour <= 17) 
+    {
+    console.log('we are working now from monday to friday')
+    next()
+  } else {
+    console.log('sorry, come back from monday to friday from 9am to 5pm')
+  }
 }
 
-app.get("/now", (req,res,next)=>{
-  req.time = getTheCurrentTimeString()
-  next()
-},
-(req,res)=>{
-res.json({time: req.time});
-}) */
+app.use(midelware)
+
+//import middlewares
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/', routerService)
+ app.use('/', routerContact) 
 
 
 app.listen(PORT, (error) => {

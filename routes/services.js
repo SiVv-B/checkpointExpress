@@ -4,6 +4,7 @@ const services = require('../services')
 
 //get all the services
 router.get('/service', (req, res) => {
+  console.log('service is here')
   res.json(services)
 })
 //get one service
@@ -41,4 +42,4 @@ router.get('/service/:id', (req, res) => {
 
 
 
-module.exports= router 
+module.exports= router
